@@ -1278,9 +1278,9 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     NSTimeInterval timePassedSinceSubmittingForText = [methodFinish timeIntervalSinceDate:self.startText];
     NSTimeInterval timePassedSinceSubmittingForFace = [methodFinish timeIntervalSinceDate:self.startFace];
     NSTimeInterval timePassedSinceSubmittingForBarcode = [methodFinish timeIntervalSinceDate:self.startBarcode];
-    BOOL canSubmitForTextDetection = timePassedSinceSubmittingForText > 0.5 && _finishedReadingText && self.canReadText && [self.textDetector isRealDetector];
-    BOOL canSubmitForFaceDetection = timePassedSinceSubmittingForFace > 0.5 && _finishedDetectingFace && self.canDetectFaces && [self.faceDetector isRealDetector];
-    BOOL canSubmitForBarcodeDetection = timePassedSinceSubmittingForBarcode > 0.5 && _finishedDetectingBarcodes && self.canDetectBarcodes && [self.barcodeDetector isRealDetector];
+    BOOL canSubmitForTextDetection = timePassedSinceSubmittingForText > 0.2 && _finishedReadingText && self.canReadText && [self.textDetector isRealDetector];
+    BOOL canSubmitForFaceDetection = timePassedSinceSubmittingForFace > 0.2 && _finishedDetectingFace && self.canDetectFaces && [self.faceDetector isRealDetector];
+    BOOL canSubmitForBarcodeDetection = timePassedSinceSubmittingForBarcode > 0.2 && _finishedDetectingBarcodes && self.canDetectBarcodes && [self.barcodeDetector isRealDetector];
     if (canSubmitForFaceDetection || canSubmitForTextDetection || canSubmitForBarcodeDetection) {
         CGSize previewSize = CGSizeMake(_previewLayer.frame.size.width, _previewLayer.frame.size.height);
         NSInteger position = self.videoCaptureDeviceInput.device.position;

@@ -19,6 +19,8 @@
     self.options.performanceMode = FIRVisionFaceDetectorPerformanceModeFast;
     self.options.landmarkMode = FIRVisionFaceDetectorLandmarkModeNone;
     self.options.classificationMode = FIRVisionFaceDetectorClassificationModeNone;
+    self.options.contourMode = FIRVisionFaceDetectorContourModeAll;
+      
     
     self.vision = [FIRVision vision];
     self.faceRecognizer = [_vision faceDetectorWithOptions:_options];
@@ -41,6 +43,10 @@
              @"Landmarks" : @{
                      @"all" : @(RNFaceDetectAllLandmarks),
                      @"none" : @(RNFaceDetectNoLandmarks)
+                     },
+             @"Contour" : @{
+                     @"all" : @(RNFaceDetectAllContour),
+                     @"none" : @(RNFaceDetectNoContour)
                      },
              @"Classifications" : @{
                      @"all" : @(RNFaceRunAllClassifications),
@@ -70,6 +76,20 @@
         if (sessionQueue) {
             dispatch_async(sessionQueue, ^{
                 self.options.landmarkMode = requestedValue;
+                self.faceRecognizer =
+                [self.vision faceDetectorWithOptions:self.options];
+            });
+        }
+    }
+}
+
+- (void)setContourMode:(id)json queue:(dispatch_queue_t)sessionQueue
+{
+    long requestedValue = [RCTConvert NSInteger:json];
+    if (requestedValue != self.options.contourMode) {
+        if (sessionQueue) {
+            dispatch_async(sessionQueue, ^{
+                self.options.contourMode = requestedValue;
                 self.faceRecognizer =
                 [self.vision faceDetectorWithOptions:self.options];
             });
@@ -222,6 +242,109 @@
             [resultDict setObject:[self processPoint:noseBase.position]
                            forKey:@"noseBasePosition"];
         }
+        
+        // If contour was enabled
+        /** Contour of left eye */
+        FIRVisionFaceContour *leftEye =
+        [face contourOfType:FIRFaceContourTypeLeftEye];
+        if (leftEye != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in leftEye.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"leftEye"];
+        }
+        /** Contour of right eye */
+        FIRVisionFaceContour *rightEye =
+        [face contourOfType:FIRFaceContourTypeRightEye];
+        if (rightEye != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in rightEye.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"rightEye"];
+        }
+        /** Contour of right eye */
+        FIRVisionFaceContour *leftEyebrowTop =
+        [face contourOfType:FIRFaceContourTypeLeftEyebrowTop];
+        if (leftEyebrowTop != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in leftEyebrowTop.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"leftEyebrowTop"];
+        }
+        /** Contour of right eye */
+        FIRVisionFaceContour *leftEyebrowBottom =
+        [face contourOfType:FIRFaceContourTypeLeftEyebrowBottom];
+        if (leftEyebrowBottom != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in leftEyebrowBottom.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"leftEyebrowBottom"];
+        }
+        /** Contour of right eye */
+        FIRVisionFaceContour *rightEyebrowBottom =
+        [face contourOfType:FIRFaceContourTypeRightEyebrowBottom];
+        if (rightEyebrowBottom != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in rightEyebrowBottom.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"rightEyebrowBottom"];
+        }
+        /** Contour of right eye */
+        FIRVisionFaceContour *rightEyebrowTop =
+        [face contourOfType:FIRFaceContourTypeRightEyebrowTop];
+        if (rightEyebrowTop != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in rightEyebrowTop.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"rightEyebrowTop"];
+        }
+        /** Contour of upper lip top */
+        FIRVisionFaceContour *upperLipTop =
+        [face contourOfType:FIRFaceContourTypeUpperLipTop];
+        if (upperLipTop != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in upperLipTop.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"upperLipTop"];
+        }
+        /** Contour of upper lip bottom. */
+        FIRVisionFaceContour *upperLipBottomContour =
+        [face contourOfType:FIRFaceContourTypeUpperLipBottom];
+        if (upperLipBottomContour != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in upperLipBottomContour.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"upperLipBottom"];
+        }
+        /** Contour of upper lip top */
+        FIRVisionFaceContour *lowerLipTop =
+        [face contourOfType:FIRFaceContourTypeLowerLipTop];
+        if (lowerLipTop != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in lowerLipTop.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"lowerLipTop"];
+        }
+        /** Contour of upper lip bottom. */
+        FIRVisionFaceContour *lowerLipBottomContour =
+        [face contourOfType:FIRFaceContourTypeLowerLipBottom];
+        if (lowerLipBottomContour != nil) {
+            NSMutableArray *pointsArray = [NSMutableArray new];
+            for (FIRVisionPoint *point in lowerLipBottomContour.points) {
+                [pointsArray addObject:[self processPoint:point]];
+            }
+            [resultDict setObject:pointsArray forKey:@"lowerLipBottom"];
+        }
+
         
         // If classification was enabled:
         if (face.hasSmilingProbability) {
