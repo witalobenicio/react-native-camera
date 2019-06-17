@@ -26,10 +26,12 @@ public class RNFaceDetector {
   private int mLandmarkType = NO_LANDMARKS;
   private float mMinFaceSize = 0.15f;
   private int mMode = FAST_MODE;
+  private int mContourMode = ALL_CONTOURS;
 
   public RNFaceDetector(Context context) {
     mBuilder = new FirebaseVisionFaceDetectorOptions.Builder()
             .setPerformanceMode(mMode)
+            .setContourMode(mContourMode)
             .setLandmarkMode(mLandmarkType)
             .setClassificationMode(mClassificationType)
             .setMinFaceSize(mMinFaceSize);
@@ -61,6 +63,14 @@ public class RNFaceDetector {
       release();
       mBuilder.setLandmarkMode(landmarkType);
       mLandmarkType = landmarkType;
+    }
+  }
+
+  public void setContourType(int mode) {
+    if (mode != mContourMode) {
+      release();
+      mBuilder.setContourMode(mode);
+      mContourMode = mode;
     }
   }
 
