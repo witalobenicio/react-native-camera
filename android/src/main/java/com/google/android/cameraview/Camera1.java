@@ -185,7 +185,7 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
             if (mPreviewTexture != null) {
                 mCamera.setPreviewTexture(mPreviewTexture);
             } else if (mPreview.getOutputClass() == SurfaceHolder.class) {
-                final boolean needsToStopPreview = mShowingPreview && Build.VERSION.SDK_INT < 14;
+                final boolean needsToStopPreview = mShowingPreview && Build.VERSION.SDK_INT < 16;
                 if (needsToStopPreview) {
                     mCamera.stopPreview();
                     mIsPreviewActive = false;
@@ -203,27 +203,14 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
     }
 
     private void startCameraPreview() {
-        if (Build.VERSION.SDK_INT <= 16) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(2000);
-                        mCamera.startPreview();
-                    }
-                    catch (InterruptedException e)
-                    {
-
-                    }
-                }
-            });
-            thread.start();
-        } else {
+        try {
             mCamera.startPreview();
-        }
-        mIsPreviewActive = true;
-        if (mIsScanning) {
-            mCamera.setPreviewCallback(this);
+            mIsPreviewActive = true;
+            if (mIsScanning) {
+                mCamera.setPreviewCallback(this);
+            }
+        } catch (Exception e) {
+
         }
     }
 
@@ -531,10 +518,14 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
                     isPictureCaptureInProgress.set(false);
                     camera.cancelAutoFocus();
                     if (options.hasKey("pauseAfterCapture") && !options.getBoolean("pauseAfterCapture")) {
-                        camera.startPreview();
-                        mIsPreviewActive = true;
-                        if (mIsScanning) {
-                            camera.setPreviewCallback(Camera1.this);
+                        try {
+                            camera.startPreview();
+                            mIsPreviewActive = true;
+                            if (mIsScanning) {
+                                camera.setPreviewCallback(Camera1.this);
+                            }
+                        } catch (Exception e) {
+
                         }
                     } else {
                         camera.stopPreview();
