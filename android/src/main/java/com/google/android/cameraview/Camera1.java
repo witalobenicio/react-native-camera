@@ -44,6 +44,9 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
                                                 MediaRecorder.OnErrorListener, Camera.PreviewCallback {
 
     private static final int INVALID_CAMERA_ID = -1;
+    private static final int MAX_TRIES = 100;
+
+    private int TRIES_PREVIEWSTART = 0;
 
     private static final SparseArrayCompat<String> FLASH_MODES = new SparseArrayCompat<>();
 
@@ -204,13 +207,22 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
 
     private void startCameraPreview() {
         try {
-            mCamera.startPreview();
-            mIsPreviewActive = true;
-            if (mIsScanning) {
-                mCamera.setPreviewCallback(this);
+            if (TRIES_PREVIEWSTART < MAX_TRIES) {
+                mCamera.startPreview();
+                mIsPreviewActive = true;
+                if (mIsScanning) {
+                    mCamera.setPreviewCallback(this);
+                }
+                TRIES_PREVIEWSTART = 0;
             }
         } catch (Exception e) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ie) {
 
+            }
+            startCameraPreview();
+            TRIES_PREVIEWSTART++;
         }
     }
 
